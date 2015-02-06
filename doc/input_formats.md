@@ -246,6 +246,8 @@ which is a memory buffer that contains the following 5 formulas:
   `!f3 & ((!f2 & 1) | ((1 | !f2) & ((!f0 & 0) | ((0 | !f0) & 1))))`
 
 The value of a memory buffer expression like `$ 5 f0 f1 f2 f3 f4` is equal to the value of the last formula in the buffer, here `f4`.
+Memory buffers can be nested, meaning that an element of a memory buffer can itself be a memory buffer.
+For example, `$ 3 x $ 2 y ? 0 & ? 0 ? 1`.
 
 Memory buffers allow using the values of formulas at arbitrary places without the need to copy the formulas there, nor introduce auxiliary binary variables. This is handy to define [full-adders](https://en.wikipedia.org/wiki/Adder_%28electronics%29) for ripple-carry addition, and more general bitvector arithmetic. The [ternary conditional operator](https://en.wikipedia.org/wiki/%3F:) can also be efficiently represented by using a memory buffer.
 
