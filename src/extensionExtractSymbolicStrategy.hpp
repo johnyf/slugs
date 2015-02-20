@@ -72,6 +72,7 @@ public:
      * @param outputStream - Where the strategy shall be printed to.
      */
     void computeAndPrintSymbolicStrategy(std::string filename) {
+        mgr.printStats();
 
         // We don't want any reordering from this point onwards, as
         // the BDD manipulations from this point onwards are 'kind of simple'.
