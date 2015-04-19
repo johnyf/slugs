@@ -25,7 +25,8 @@ BFBddManager::BFBddManager(unsigned int maxMemoryInMB, float reorderingMaxBlowup
 
 	// Configuring the manager
         Cudd_SetMaxCacheHard(mgr, (unsigned int) -1);
-	Cudd_AutodynEnable(mgr, CUDD_REORDER_SIFT);
+	Cudd_AutodynEnable(mgr, CUDD_REORDER_GROUP_SIFT);
+	/*Cudd_AutodynDisable(mgr);*/
 	Cudd_SetMaxGrowth(mgr, reorderingMaxBlowup);
 	Cudd_SetMinHit(mgr, 1);
 	setAutomaticOptimisation(true);
