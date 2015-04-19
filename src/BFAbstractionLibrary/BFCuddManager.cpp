@@ -21,10 +21,10 @@
  */
 BFBddManager::BFBddManager(unsigned int maxMemoryInMB, float reorderingMaxBlowup) {
 
-	mgr = Cudd_Init(0, 0, CUDD_UNIQUE_SLOTS, CUDD_CACHE_SLOTS, (long) 6 * 1024UL * 1024UL * 1024UL);
+	mgr = Cudd_Init(0, 0, CUDD_UNIQUE_SLOTS, CUDD_CACHE_SLOTS, (long) 10 * 1024UL * 1024UL * 1024UL);
 
 	// Configuring the manager
-        Cudd_SetMaxCacheHard(mgr, (unsigned int)-1);
+        Cudd_SetMaxCacheHard(mgr, (unsigned int) -1);
 	Cudd_AutodynEnable(mgr, CUDD_REORDER_SIFT);
 	Cudd_SetMaxGrowth(mgr, reorderingMaxBlowup);
 	Cudd_SetMinHit(mgr, 1);
