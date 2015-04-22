@@ -23,11 +23,10 @@ class BFBddVarCube;
 class BFBddVarVector;
 
 class BFBddManager: boost::noncopyable {
-private:
+public:
 	DdManager *mgr;
 
-public:
-	BFBddManager(unsigned int maxMemoryInMB = 3096, float reorderingMaxBlowup = 1.2f);
+	BFBddManager();
 	~BFBddManager();
 
 	void setAutomaticOptimisation(bool enable);

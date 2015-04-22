@@ -19,16 +19,14 @@
  * @param reorderingMaxBlowup The maximal allowed blowup during sifting steps in the reordering algorithm. Standard is 1.2 - use 1.1 to have less reordering done. A value of 1.0 results in greedy reordering.
  * @author ehlers
  */
-BFBddManager::BFBddManager(unsigned int maxMemoryInMB, float reorderingMaxBlowup) {
-
-	mgr = Cudd_Init(0, 0, CUDD_UNIQUE_SLOTS, CUDD_CACHE_SLOTS, (long) 10 * 1024UL * 1024UL * 1024UL);
+BFBddManager::BFBddManager() {
+	mgr = Cudd_Init(0, 0, CUDD_UNIQUE_SLOTS, CUDD_CACHE_SLOTS, (long) 2 * 1024UL * 1024UL * 1024UL);
 
 	// Configuring the manager
         Cudd_SetMaxCacheHard(mgr, (unsigned int) -1);
 	Cudd_AutodynEnable(mgr, CUDD_REORDER_GROUP_SIFT);
-	/*Cudd_AutodynDisable(mgr);*/
-	Cudd_SetMaxGrowth(mgr, reorderingMaxBlowup);
-	Cudd_SetMinHit(mgr, 1);
+	Cudd_SetMaxGrowth(mgr, 1.2f);
+	Cudd_SetMinHit(mgr, 1.0);
 	setAutomaticOptimisation(true);
 }
 
