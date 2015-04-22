@@ -1,11 +1,12 @@
 #ifndef __EXTENSION_EXTRACT_SYMBOLIC_STRATEGY_HPP
 #define __EXTENSION_EXTRACT_SYMBOLIC_STRATEGY_HPP
 
+#include <sys/time.h>
 #include "gr1context.hpp"
 #include <string>
 
-/**
- * An extension that triggers that a symbolic strategy to be extracted.
+/*
+ * An extension that extracts a symbolic strategy.
  */
 template<class T, bool oneStepRecovery> class XExtractSymbolicStrategy : public T {
 protected:
@@ -73,10 +74,15 @@ public:
      */
     void computeAndPrintSymbolicStrategy(std::string filename) {
         mgr.printStats();
+	printf("starting strategy synthesis.\n");
+	struct timeval start_time, end_time, diff_time;
+	int j = 0;
+	double time;
+	gettimeofday(&start_time, NULL);
 
         // We don't want any reordering from this point onwards, as
         // the BDD manipulations from this point onwards are 'kind of simple'.
-        mgr.setAutomaticOptimisation(false);
+        //mgr.setAutomaticOptimisation(false);
 
         // Prepare initial to-do list from the allowed initial states
         BF init = (oneStepRecovery)?(winningPositions & initSys):(winningPositions & initSys & initEnv);
@@ -86,12 +92,25 @@ public:
         for (unsigned int i=0;i<livenessGuarantees.size();i++) {
             BF casesCovered = mgr.constantFalse();
             BF strategy = mgr.constantFalse();
+		j = 0;
             for (auto it = strategyDumpingData.begin();it!=strategyDumpingData.end();it++) {
+		/* it-> first = j = liveness guarantee
+		   it-> second = foundPaths */
                 if (it->first == i) {
                     BF newCases = it->second.ExistAbstract(varCubePostOutput) & !casesCovered;
                     strategy |= newCases & it->second;
                     casesCovered |= newCases;
+			/* print info */
+			gettimeofday(&end_time, NULL);
+			timersub(&end_time, &start_time, &diff_time);
+			time = diff_time.tv_sec * 1000 + diff_time.tv_usec / 1000;
+			printf("time (ms): %1.3f, reordering (ms): %ld, goal: %d, onion_ring: %d, nodes: all: %ld, strategy: %d, cases_covered: %d, new_cases: %d\n",
+				time, Cudd_ReadReorderingTime(mgr.mgr),
+				i, j,
+				Cudd_ReadNodeCount(mgr.mgr),
+				strategy.getSize(), casesCovered.getSize(), newCases.getSize());
                 }
+		j++;
             }
             positionalStrategiesForTheIndividualGoals[i] = strategy;
 
@@ -122,6 +141,15 @@ public:
             }
             combinedStrategy |= thisEncoding & positionalStrategiesForTheIndividualGoals[i] &
                 ((!variables[goalTransitionSelectorVar]) | livenessGuarantees[i]);
+		/* print info */
+		gettimeofday(&end_time, NULL);
+		timersub(&end_time, &start_time, &diff_time);
+		time = diff_time.tv_sec * 1000 + diff_time.tv_usec / 1000;
+		printf("time (ms): %1.3f, reordering (ms): %ld, goal: %d, nodes: all: %ld, combined_strategy: %d\n",
+			time, Cudd_ReadReorderingTime(mgr.mgr),
+			i,
+			Cudd_ReadNodeCount(mgr.mgr),
+			combinedStrategy.getSize());
         }
 
         std::ostringstream fileExtraHeader;
@@ -147,7 +175,12 @@ public:
         // BF_newDumpDot(*this,dump,"SymbolicStrategyCounterVar PreInput PreOutput PostInput PostOutput","/tmp/writtenBDD.dot");
 
         mgr.writeBDDToFile(filename.c_str(),fileExtraHeader.str(),combinedStrategy,variables,variableNames);
-
+	printf("done writing DDDMP file.\n");
+	/* print info */
+	gettimeofday(&end_time, NULL);
+	timersub(&end_time, &start_time, &diff_time);
+	time = diff_time.tv_sec * 1000 + diff_time.tv_usec / 1000;
+	printf("time (ms): %1.3f, reordering (ms): %ld, nodes: %ld\n", time, Cudd_ReadReorderingTime(mgr.mgr), Cudd_ReadNodeCount(mgr.mgr));
     }
 
     static GR1Context* makeInstance(std::list<std::string> &filenames) {

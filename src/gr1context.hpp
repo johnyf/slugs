@@ -105,6 +105,9 @@ public:
             currentValue = newOne;
         }
     }
+	int dag_size() {
+		return currentValue.getSize();
+	}
     bool isFixedPointReached() const { return reachedFixedPoint; }
     BF getValue() { return currentValue; }
 };

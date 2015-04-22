@@ -1,3 +1,4 @@
+#include <sys/time.h>
 #include "gr1context.hpp"
 
 /**
@@ -13,11 +14,15 @@
  *        the system and that lead to the set of target positions
  */
  void GR1Context::computeWinningPositions() {
+	struct timeval start_time, end_time, diff_time;
+	double time;
+	gettimeofday(&start_time, NULL);
 
     // The greatest fixed point - called "Z" in the GR(1) synthesis paper
     BFFixedPoint nu2(mgr.constantTrue());
 
     // Iterate until we have found a fixed point
+	printf("starting fixed point computation\n");
     for (;!nu2.isFixedPointReached();) {
 
         // To extract a strategy in case of realizability, we need to store a sequence of 'preferred' transitions in the
@@ -63,17 +68,26 @@
 
                         // Update the inner-most fixed point with the result of applying the enforcable predecessor operator
                         nu0.update(safetyEnv.Implies(foundPaths).ExistAbstract(varCubePostOutput).UnivAbstract(varCubePostInput));
+			// print info
+			gettimeofday(&end_time, NULL);
+			timersub(&end_time, &start_time, &diff_time);
+			time = diff_time.tv_sec * 1000 + diff_time.tv_usec / 1000;
+			printf("time (ms): %1.3f, reordering (ms): %ld, sysj: %d, envi: %d, nodes: all: %ld, Z: %d, Y: %d, X: %d\n",
+				time, Cudd_ReadReorderingTime(mgr.mgr),
+				j, i,
+				Cudd_ReadNodeCount(mgr.mgr),
+				nu2.dag_size(), mu1.dag_size(), nu0.dag_size());
                     }
 
                     // Update the set of positions that are winning for some liveness assumption
                     goodForAnyLivenessAssumption |= nu0.getValue();
 
-                    // Dump the paths that we just wound into 'strategyDumpingData' - store the current goal long
+                    // Dump the paths that we just found into 'strategyDumpingData' - store the current goal along
                     // with the BDD
                     strategyDumpingData.push_back(std::pair<unsigned int,BF>(j,foundPaths));
                 }
 
-                // Update the moddle fixed point
+                // Update the middle fixed point
                 mu1.update(goodForAnyLivenessAssumption);
             }
 
@@ -88,6 +102,7 @@
 
     // We found the set of winning positions
     winningPositions = nu2.getValue();
+	printf("Completed fixed point computation (realizability)\n.");
 }
 
 
