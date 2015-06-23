@@ -13,6 +13,7 @@ QMAKE_LFLAGS_X86_64 = -arch x86_64
 
 QMAKE_CFLAGS_X86_64 = -arch x86_64
 QMAKE_CXXFLAGS_X86_64 = -arch x86_64
+QMAKE_CXXFLAGS += -DVERSION=\\\"`git describe --dirty --always --tags`\\\"
 
 QMAKE_CFLAGS_RELEASE += -g \
     $$BDDFLAGS

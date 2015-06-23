@@ -193,7 +193,8 @@ OptionCombination optionCombinations[] = {
  *        incorrect parameters
  */
 void printToolUsageHelp() {
-    std::cerr << "Usage of slugs:\n";
+	std::cerr << "SLUGS version: " << VERSION << "\n";
+    std::cerr << "Usage:\n";
     std::cerr << "slugs [options] <FileNames> \n\n";
     std::cerr << "The first input file is supposed to be in 'slugs' format. The others are in the format required by the options used. \n\n";
     for (unsigned int i=0;i<sizeof(commandLineArguments)/sizeof(const char*);i+=2) {
