@@ -193,10 +193,13 @@ OptionCombination optionCombinations[] = {
  *        incorrect parameters
  */
 void printToolUsageHelp() {
-	std::cerr << "SLUGS version: " << VERSION << "\n";
-    std::cerr << "Usage:\n";
-    std::cerr << "slugs [options] <FileNames> \n\n";
-    std::cerr << "The first input file is supposed to be in 'slugs' format. The others are in the format required by the options used. \n\n";
+	std::cerr << "SLUGS: SmaLl bUt complete Gr(1) Synthesis tool\n";
+	std::cerr << "\t (see documentation for author list).\n";
+	std::cerr << "version: " << VERSION << "\n";
+    std::cerr << "usage:\n";
+    std::cerr << "\t slugs [options] <FileNames> \n\n";
+    std::cerr << "The first input file is supposed to be in 'slugs' format.\n";
+    std::cerr << "The others are in the format required by the options used. \n\n";
     for (unsigned int i=0;i<sizeof(commandLineArguments)/sizeof(const char*);i+=2) {
         unsigned int leftStuff = strlen(commandLineArguments[i]);
         std::cerr << commandLineArguments[i] << " ";
@@ -224,14 +227,20 @@ void printToolUsageHelp() {
  * @return the error code: >0 means that some error has occured. In case of realizability or unrealizability, a value of 0 is returned.
  */
 int main(int argc, const char **args) {
-    std::cerr << "SLUGS: SmaLl bUt complete Gr(1) Synthesis tool (see the documentation for an author list).\n";
-
     std::list<std::string> filenames;
     std::set<std::string> parameters;
 
     // Parse paramters
     for (int i=1;i<argc;i++) {
         std::string arg = args[i];
+		if (arg.compare("--version") == 0){
+			printf("%s\n", VERSION);
+			return 0;
+		}
+		if (arg.compare("--help") == 0){
+			printToolUsageHelp();
+			return 0;
+		}
         if (arg[0]=='-') {
             bool found = false;
             for (unsigned int i=0;i<sizeof(commandLineArguments)/sizeof(const char*);i+=2) {
