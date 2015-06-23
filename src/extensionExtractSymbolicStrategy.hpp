@@ -82,7 +82,7 @@ public:
 
         // We don't want any reordering from this point onwards, as
         // the BDD manipulations from this point onwards are 'kind of simple'.
-        //mgr.setAutomaticOptimisation(false);
+        mgr.setAutomaticOptimisation(false);
 
         // Prepare initial to-do list from the allowed initial states
         BF init = (oneStepRecovery)?(winningPositions & initSys):(winningPositions & initSys & initEnv);
