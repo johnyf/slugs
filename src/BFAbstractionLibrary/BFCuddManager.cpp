@@ -20,7 +20,7 @@
  * @author ehlers
  */
 BFBddManager::BFBddManager() {
-	mgr = Cudd_Init(0, 0, CUDD_UNIQUE_SLOTS, CUDD_CACHE_SLOTS, (long) 2 * 1024UL * 1024UL * 1024UL);
+	mgr = Cudd_Init(0, 0, CUDD_UNIQUE_SLOTS, CUDD_CACHE_SLOTS, (long) 16 * 1024UL * 1024UL * 1024UL);
 
 	// Configuring the manager
         Cudd_SetMaxCacheHard(mgr, (unsigned int) -1);
